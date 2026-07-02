@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{event_name}} — Confirmación de Inscripción</title>
+</head>
+<body style="margin:0;padding:0;background:#f0f0f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f0f0;padding:30px 0">
+<tr><td align="center">
+<table width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.10)">
+
+  <!-- Header con color del plugin -->
+  <tr>
+    <td style="background:{{primary_color}};padding:28px 32px;text-align:center">
+      <h1 style="margin:0;color:{{text_color}};font-size:26px;font-weight:900;letter-spacing:-0.5px">{{site_name}}</h1>
+      <p style="margin:8px 0 0;color:{{text_color}};opacity:0.7;font-size:14px">{{site_url}}</p>
+    </td>
+  </tr>
+
+  <!-- Status Block -->
+  <tr>
+    <td style="padding:0 32px">
+      {{status_block}}
+    </td>
+  </tr>
+
+  <!-- Saludo -->
+  <tr>
+    <td style="padding:24px 32px 0">
+      <p style="margin:0;font-size:17px;font-weight:600;color:#121212">Hola, {{name}} 👋</p>
+      <p style="margin:8px 0 0;color:#666;font-size:14px;line-height:1.6">
+        Aquí está la información de tu inscripción para el evento <strong>{{event_name}}</strong>.
+        Guarda este email ya que contiene tu código de inscripción.
+      </p>
+    </td>
+  </tr>
+
+  <!-- Detalles del evento -->
+  <tr>
+    <td style="padding:20px 32px">
+      <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8e8e8;border-radius:8px;overflow:hidden">
+        <tr style="background:#f9f9f9">
+          <td style="padding:12px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;width:38%">EVENTO</td>
+          <td style="padding:12px 16px;font-size:14px;font-weight:700;color:#121212">{{event_name}}</td>
+        </tr>
+        <tr>
+          <td style="padding:12px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888">FECHA</td>
+          <td style="padding:12px 16px;font-size:14px;color:#121212">{{date}}{{time}}</td>
+        </tr>
+        <tr style="background:#f9f9f9">
+          <td style="padding:12px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888">LUGAR</td>
+          <td style="padding:12px 16px;font-size:14px;color:#121212">{{location}}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- Código de inscripción -->
+  <tr>
+    <td style="padding:8px 32px 24px">
+      <table width="100%" cellpadding="0" cellspacing="0"
+             style="background:linear-gradient(135deg,{{primary_color}} 0%,#f5c800 100%);border-radius:10px;overflow:hidden">
+        <tr>
+          <td style="padding:24px;text-align:center">
+            <p style="margin:0;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:rgba(0,0,0,0.6)">
+              CÓDIGO DE INSCRIPCIÓN
+            </p>
+            <p style="margin:8px 0 0;font-family:monospace;font-size:28px;font-weight:900;letter-spacing:4px;color:#121212">
+              {{code}}
+            </p>
+            <p style="margin:8px 0 0;font-size:12px;color:rgba(0,0,0,0.6)">
+              Presenta este código en el evento para el check-in
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- CTA -->
+  <tr>
+    <td style="padding:0 32px 24px;text-align:center">
+      <a href="{{my_registrations_url}}"
+         style="display:inline-block;background:#121212;color:#ffffff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:15px">
+        Ver mis inscripciones →
+      </a>
+    </td>
+  </tr>
+
+  <!-- Nota -->
+  <tr>
+    <td style="padding:0 32px 28px">
+      <div style="background:#f9f9f9;border-radius:8px;padding:16px;border-left:3px solid {{primary_color}}">
+        <p style="margin:0;font-size:13px;color:#666;line-height:1.6">
+          💡 <strong>Tip:</strong> Si no creaste una cuenta, se generó automáticamente una con el email que usaste.
+          Revisa tu bandeja de entrada para encontrar tus credenciales de acceso.
+        </p>
+      </div>
+    </td>
+  </tr>
+
+  <!-- Footer -->
+  <tr>
+    <td style="background:#f9f9f9;padding:20px 32px;text-align:center;border-top:1px solid #eee">
+      <p style="margin:0;font-size:12px;color:#aaa">
+        © 2025 {{site_name}} · <a href="{{site_url}}" style="color:#aaa">{{site_url}}</a>
+      </p>
+      <p style="margin:8px 0 0;font-size:11px;color:#bbb">
+        Recibiste este email porque te inscribiste en uno de nuestros eventos.
+      </p>
+    </td>
+  </tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>
