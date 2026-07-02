@@ -42,7 +42,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         $event_url    = get_permalink( $event->ID );
         $btn_text     = DCEvents_Settings::get('button_text', __('Inscribirse', 'dc-events'));
     ?>
-    <div class="dce-event-row <?php echo $featured ? 'dce-featured' : ''; ?> dce-status-<?php echo esc_attr($status); ?>"
+    <?php $has_art = has_post_thumbnail( $event->ID ); ?>
+    <div class="dce-event-row <?php echo $featured ? 'dce-featured' : ''; ?> dce-status-<?php echo esc_attr($status); ?> <?php echo $has_art ? 'dce-has-art' : ''; ?>"
          data-event-id="<?php echo $event->ID; ?>">
 
         <!-- Arte / Imagen -->

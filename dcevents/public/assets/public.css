@@ -36,13 +36,16 @@
 
 .dce-event-row {
     display: grid;
-    grid-template-columns: auto 100px 1fr auto;
+    grid-template-columns: 100px 1fr auto; /* Sin arte por defecto */
     align-items: center;
     gap: 20px;
     padding: 20px 0;
     border-bottom: 1px solid var(--dce-border);
     transition: background .15s;
     position: relative;
+}
+.dce-event-row.dce-has-art {
+    grid-template-columns: auto 100px 1fr auto; /* Con arte */
 }
 .dce-event-row:hover { background: rgba(0,0,0,.02); }
 .dce-event-row.dce-featured { background: rgba(250,225,0,.06); }
