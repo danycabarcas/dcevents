@@ -25,6 +25,7 @@ class DCEvents_Shortcodes {
         add_shortcode( 'dc_event',              [ $this, 'single_event' ] );
         add_shortcode( 'dc_registration_form',  [ $this, 'registration_form' ] );
         add_shortcode( 'dc_my_registrations',   [ $this, 'my_registrations' ] );
+        add_shortcode( 'dcevents_scanner',      [ $this, 'scanner' ] );
     }
 
     // ─── [dc_events] ─────────────────────────────────────────────────────────
@@ -188,5 +189,30 @@ class DCEvents_Shortcodes {
             <?php endforeach; ?>
         </div>
         <?php
+    }
+
+    // ─── [dcevents_scanner] ──────────────────────────────────────────────────
+    public function scanner() {
+        if ( ! is_user_logged_in() ) {
+            $args = array(
+                'echo'           => false,
+                'redirect'       => ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+                'label_username' => __( 'Nombre de usuario', 'dc-events' ),
+                'label_password' => __( 'Contraseña', 'dc-events' ),
+                'label_remember' => __( 'Recuérdame', 'dc-events' ),
+                'label_log_in'   => __( 'Iniciar sesión', 'dc-events' ),
+            );
+            $form = wp_login_form( $args );
+            
+            return '<div class="dce-scanner-login" style="max-width: 400px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-family: var(--dce-font, sans-serif);">' .
+                   '<h3 style="text-align: center; margin-top: 0; margin-bottom: 10px; font-family: var(--dce-heading-font, sans-serif);">' . __( 'Acceso para Validadores', 'dc-events' ) . '</h3>' .
+                   '<p style="text-align: center; color: #666; margin-bottom: 20px; font-size: 14px;">' . __( 'Inicia sesión con tu cuenta de Validador de Eventos para usar el escáner.', 'dc-events' ) . '</p>' .
+                   $form .
+                   '</div>';
+        }
+
+        ob_start();
+        include DCEVENTS_PLUGIN_DIR . 'public/views/scanner.php';
+        return ob_get_clean();
     }
 }

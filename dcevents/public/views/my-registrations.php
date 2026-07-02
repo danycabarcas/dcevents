@@ -97,63 +97,49 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             $checked     = get_post_meta($reg->ID, '_dcevents_checked_in', true);
             $thumb       = get_the_post_thumbnail_url($event_id, 'medium');
         ?>
-        <div class="dce-my-reg-card" data-registration-id="<?php echo $reg->ID; ?>">
-            <?php if ($thumb) : ?>
-            <div class="dce-reg-card-image" style="background-image:url('<?php echo esc_url($thumb); ?>')"></div>
-            <?php endif; ?>
-            <div class="dce-reg-card-body">
+        <div class="dce-my-reg-card dce-ticket-style" data-registration-id="<?php echo $reg->ID; ?>">
+            <div class="dce-ticket-main">
                 <div class="dce-reg-card-header">
-                    <div>
-                        <div class="dce-reg-card-status"
-                             style="background:<?php echo esc_attr($info['color']); ?>">
-                            <?php echo esc_html($info['label']); ?>
-                        </div>
-                        <?php if ($checked === '1') : ?>
-                        <div class="dce-reg-checkedin">✅ <?php _e('Check-in realizado', 'dc-events'); ?></div>
-                        <?php endif; ?>
-                    </div>
-                    <?php if ($price > 0) : ?>
-                    <div class="dce-reg-price"><?php echo '$' . number_format($price, 0, ',', '.') . ' ' . $currency; ?></div>
-                    <?php endif; ?>
-                </div>
-
-                <h3 class="dce-reg-event-title">
-                    <?php echo $event ? esc_html($event->post_title) : '—'; ?>
-                </h3>
-
-                <div class="dce-reg-card-meta">
-                    <?php if ($start_date) : ?>
-                    <span>📅 <?php echo date_i18n('d M Y', strtotime($start_date)); ?>
-                        <?php if ($start_time) : ?> — <?php echo date_i18n('g:i a', strtotime($start_time)); ?><?php endif; ?>
+                    <h4><a href="<?php echo get_permalink($event_id); ?>"><?php echo esc_html($event->post_title); ?></a></h4>
+                    <span class="dce-status-badge dce-badge-<?php echo sanitize_html_class($status); ?>">
+                        <?php echo esc_html($info['label']); ?>
                     </span>
-                    <?php endif; ?>
-                    <?php if ($is_virtual) : ?>
-                    <span>🌐 <?php _e('Online', 'dc-events'); ?></span>
-                    <?php elseif ($venue) : ?>
-                    <span>📍 <?php echo esc_html("$venue, $city"); ?></span>
-                    <?php endif; ?>
                 </div>
-
-                <!-- Código de inscripción -->
-                <div class="dce-reg-ticket">
-                    <div class="dce-ticket-perforated"></div>
-                    <div class="dce-ticket-code">
-                        <span class="dce-ticket-label"><?php _e('Código de Inscripción', 'dc-events'); ?></span>
-                        <span class="dce-ticket-num"><?php echo esc_html($code); ?></span>
-                        <span class="dce-ticket-copy" onclick="navigator.clipboard.writeText('<?php echo esc_js($code); ?>');this.textContent='✅'" title="<?php _e('Copiar', 'dc-events'); ?>">📋</span>
+                
+                <div class="dce-reg-card-body">
+                    <p class="dce-meta-item">🗓️ <?php echo $start_date ? date_i18n('d M Y', strtotime($start_date)) : ''; ?> <?php echo $start_time ? ' - ' . date_i18n('g:i a', strtotime($start_time)) : ''; ?></p>
+                    <p class="dce-meta-item">📍 <?php echo $is_virtual ? __('Virtual', 'dc-events') : esc_html($venue . ', ' . $city); ?></p>
+                    
+                    <div class="dce-ticket-code-wrap">
+                        <span class="dce-ticket-label"><?php _e('Tu código de acceso:', 'dc-events'); ?></span>
+                        <div class="dce-ticket-code">
+                            <span class="dce-ticket-num"><?php echo esc_html($code); ?></span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="dce-reg-card-actions">
-                    <?php if ($event) : ?>
                     <a href="<?php echo get_permalink($event_id); ?>" class="dce-card-link"><?php _e('Ver evento', 'dc-events'); ?></a>
-                    <?php endif; ?>
-                    <?php if (!in_array($status, ['cancelled', 'attended'])) : ?>
-                    <button class="dce-card-cancel-btn dce-cancel-registration" data-id="<?php echo $reg->ID; ?>">
-                        <?php _e('Cancelar inscripción', 'dc-events'); ?>
-                    </button>
+                    <?php if ($status !== 'cancelled' && $status !== 'attended' && $checked !== '1') : ?>
+                        <button class="dce-card-cancel-btn dce-cancel-registration" data-id="<?php echo $reg->ID; ?>">
+                            <?php _e('Cancelar inscripción', 'dc-events'); ?>
+                        </button>
                     <?php endif; ?>
                 </div>
+            </div>
+
+            <!-- Sección QR del Ticket -->
+            <div class="dce-ticket-qr-section <?php echo ($checked === '1' || $status === 'attended') ? 'dce-ticket-used' : ''; ?>">
+                <?php if ($checked === '1' || $status === 'attended') : ?>
+                    <div class="dce-qr-overlay">✅<br>Ingresado</div>
+                <?php endif; ?>
+                <?php 
+                // Generar QR dinámico (DCEVENT|ID|CODE)
+                $qr_data = urlencode( "DCEVENT|" . $reg->ID . "|" . $code );
+                $qr_url  = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . $qr_data . "&color=121212&bgcolor=ffffff";
+                ?>
+                <img src="<?php echo esc_url($qr_url); ?>" alt="QR Code" class="dce-qr-img">
+                <span class="dce-qr-help"><?php _e('Muestra este QR en la puerta', 'dc-events'); ?></span>
             </div>
         </div>
         <?php endforeach; ?>

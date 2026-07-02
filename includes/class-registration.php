@@ -25,6 +25,7 @@ class DCEvents_Registration {
         add_action( 'wp_ajax_nopriv_dcevents_register', [ $this, 'process_registration' ] );
         add_action( 'wp_ajax_dcevents_cancel_registration', [ $this, 'cancel_registration' ] );
         add_action( 'wp_ajax_dcevents_checkin',         [ $this, 'check_in_attendee' ] );
+        add_action( 'wp_ajax_dcevents_checkin_qr',      [ $this, 'check_in_qr_attendee' ] );
         add_action( 'wp_ajax_dcevents_update_status',   [ $this, 'update_registration_status' ] );
     }
 
@@ -214,6 +215,53 @@ class DCEvents_Registration {
         update_post_meta( $registration_id, '_dcevents_checkin_time', current_time( 'mysql' ) );
 
         wp_send_json_success( [ 'message' => __( 'Check-in realizado.', 'dc-events' ) ] );
+    }
+
+    // ─── Check-in vía QR ──────────────────────────────────────────────────────
+    public function check_in_qr_attendee() {
+        if ( ! current_user_can( 'dcevents_check_in_attendee' ) ) {
+            wp_send_json_error( [ 'message' => __( 'Sin permiso para validar.', 'dc-events' ) ] );
+        }
+
+        $registration_id = intval( $_POST['registration_id'] ?? 0 );
+        $code            = sanitize_text_field( $_POST['code'] ?? '' );
+
+        if ( ! $registration_id || ! $code ) {
+            wp_send_json_error( [ 'message' => __( 'Datos de QR incompletos.', 'dc-events' ) ] );
+        }
+
+        $reg = get_post( $registration_id );
+        if ( ! $reg || $reg->post_type !== 'dc_registration' ) {
+            wp_send_json_error( [ 'message' => __( 'Inscripción no encontrada.', 'dc-events' ) ] );
+        }
+
+        $saved_code = get_post_meta( $registration_id, '_dcevents_code', true );
+        if ( $saved_code !== $code ) {
+            wp_send_json_error( [ 'message' => __( 'Código QR inválido para esta inscripción.', 'dc-events' ) ] );
+        }
+
+        $status = get_post_meta( $registration_id, '_dcevents_reg_status', true );
+        if ( $status === 'cancelled' ) {
+            wp_send_json_error( [ 'message' => __( 'Esta inscripción está cancelada.', 'dc-events' ) ] );
+        }
+
+        $checked = get_post_meta( $registration_id, '_dcevents_checked_in', true );
+        if ( $checked === '1' ) {
+            $time = get_post_meta( $registration_id, '_dcevents_checkin_time', true );
+            $formatted_time = $time ? date_i18n('d M Y, h:i A', strtotime($time)) : '';
+            wp_send_json_error( [ 'message' => sprintf( __( 'El asistente ya ingresó el %s.', 'dc-events' ), $formatted_time ) ] );
+        }
+
+        // Marcar como ingresado
+        update_post_meta( $registration_id, '_dcevents_checked_in', '1' );
+        update_post_meta( $registration_id, '_dcevents_checkin_time', current_time( 'mysql' ) );
+        update_post_meta( $registration_id, '_dcevents_reg_status', 'attended' ); // Opcional, pero bueno para stats
+
+        $first_name = get_post_meta( $registration_id, '_dcevents_first_name', true );
+        $last_name  = get_post_meta( $registration_id, '_dcevents_last_name', true );
+        $name = trim( $first_name . ' ' . $last_name );
+
+        wp_send_json_success( [ 'message' => sprintf( __( 'Check-in de %s realizado.', 'dc-events' ), $name ) ] );
     }
 
     // ─── Actualizar estado ────────────────────────────────────────────────────

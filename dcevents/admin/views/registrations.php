@@ -72,6 +72,41 @@ $base_url = admin_url( 'admin.php?page=dc-events-registrations' );
         </div>
     </div>
 
+    <?php if ( $event_id ) : 
+        $all_regs_event = get_posts([
+            'post_type' => 'dc_registration',
+            'posts_per_page' => -1,
+            'meta_query' => [
+                [ 'key' => '_dcevents_event_id', 'value' => $event_id ],
+                [ 'key' => '_dcevents_reg_status', 'value' => 'cancelled', 'compare' => '!=' ]
+            ],
+            'fields' => 'ids'
+        ]);
+        $total_valid = count($all_regs_event);
+        $checked_in = 0;
+        foreach ($all_regs_event as $rid) {
+            if ( get_post_meta($rid, '_dcevents_checked_in', true) === '1' ) {
+                $checked_in++;
+            }
+        }
+        $pending = $total_valid - $checked_in;
+    ?>
+    <!-- Estadísticas en vivo -->
+    <div class="dce-admin-stats-board" style="display:flex; gap:20px; background:#fff; padding:20px; border-radius:8px; border:1px solid #ddd; margin-bottom:20px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+        <div style="flex:1; text-align:center;">
+            <div style="font-size:12px; color:#888; text-transform:uppercase; font-weight:700; letter-spacing:1px;">🎫 Total Válidos</div>
+            <div style="font-size:36px; font-weight:900; color:#333; font-family:monospace;"><?php echo $total_valid; ?></div>
+        </div>
+        <div style="flex:1; text-align:center; border-left:1px solid #eee; border-right:1px solid #eee;">
+            <div style="font-size:12px; color:#1ed760; text-transform:uppercase; font-weight:700; letter-spacing:1px;">✅ Han Ingresado</div>
+            <div style="font-size:36px; font-weight:900; color:#1ed760; font-family:monospace;"><?php echo $checked_in; ?></div>
+        </div>
+        <div style="flex:1; text-align:center;">
+            <div style="font-size:12px; color:#ff4444; text-transform:uppercase; font-weight:700; letter-spacing:1px;">⏳ Faltan</div>
+            <div style="font-size:36px; font-weight:900; color:#ff4444; font-family:monospace;"><?php echo $pending; ?></div>
+        </div>
+    </div>
+    <?php endif; ?>
     <!-- Filtros -->
     <div class="dce-filters-bar">
         <form method="get" class="dce-search-form">
